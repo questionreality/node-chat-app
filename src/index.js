@@ -9,6 +9,7 @@ const {
   removeUser,
   getUser,
   getUsersInRoom,
+  getRooms,
 } = require("./utils/users");
 const app = express();
 //creating it on our own so that we can pass it into socketio
@@ -20,9 +21,11 @@ const port = process.env.PORT || 3000;
 
 io.on("connection", (socket) => {
   console.log("new web socket connection");
+  socket.emit("getRooms", {
+    rooms: getRooms(),
+  });
   socket.on("join", (options, callback) => {
     const { error, user } = addUser({ id: socket.id, ...options });
-
     if (error) {
       return callback(error);
     }
@@ -40,6 +43,7 @@ io.on("connection", (socket) => {
     });
     callback();
   });
+
   socket.on("message", (messageFromClient, cb) => {
     const user = getUser(socket.id);
     // if (user) {
@@ -53,6 +57,7 @@ io.on("connection", (socket) => {
     );
     cb();
   });
+
   socket.on("sendLocation", ({ latitude, longitude } = {}, cb) => {
     const user = getUser(socket.id);
     io.to(user.room).emit(
@@ -64,6 +69,7 @@ io.on("connection", (socket) => {
     );
     cb();
   });
+
   socket.on("disconnect", () => {
     const user = removeUser(socket.id);
     if (user) {

@@ -35,6 +35,8 @@ const autoscroll = () => {
     $messages.scrollTop = $messages.scrollHeight;
   }
 };
+
+
 socket.on("message", ({ text: messageFromServer, createdAt, username }) => {
   const html = Mustache.render(messageTemplate, {
     message: messageFromServer,

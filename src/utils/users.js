@@ -42,12 +42,25 @@ const getUser = (id) => {
 const getUsersInRoom = (room) => {
   return users.filter((user) => user.room === room);
 };
+const getRooms = () => {
+  let rooms = [];
+  users.forEach((user) => {
+    const room = rooms.find((room) => room.name === user.room);
+    if (room) {
+      room.count += 1;
+    } else {
+      rooms.push({ name: user.room, count: 1 });
+    }
+  });
+  return rooms;
+};
 
 module.exports = {
   addUser,
   removeUser,
   getUser,
   getUsersInRoom,
+  getRooms,
 };
 
 // const user = addUser({
